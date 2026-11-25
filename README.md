@@ -13,7 +13,8 @@ Görev çubuğunun sağ alt köşesinde, diğer pencerelerin üstünde duran kü
 - Görev çubuğunun sağ altına hizalanan, her zaman üstte, çerçevesiz pencere
 - TCMB resmî günlük EUR/TRY alış ve satış kuru
 - Önceki iş gününe göre yüzde değişim (hafta sonu ve tatilleri atlar)
-- 15 dakikada bir otomatik yenileme; uykudan dönüşte tazeleme
+- 15 dakikada bir otomatik yenileme; ayrıca 15:31, 15:35 ve 15:40’ta bülten kontrolü
+- Uykudan dönüşte ve gün değişiminde zorunlu tazeleme
 - İnternet yoksa son iyi veriyi “eski veri” etiketiyle gösterme
 - Tepsi simgesi: göster/gizle, yenile, Windows ile başlat, konumu sıfırla, çıkış
 - Sürüklenebilir ve konumu hatırlanan pencere
@@ -51,6 +52,9 @@ npm run dist
 - Kaynak: `https://www.tcmb.gov.tr/kurlar/today.xml`
 - Önceki iş günü: `https://www.tcmb.gov.tr/kurlar/YYYYMM/DDMMYYYY.xml`
 - Her **15 dakikada** bir yenilenir; uygulama uykudan döndüğünde de tazelenir.
+- Bülten çıkışına yakın **15:31, 15:35 ve 15:40**’ta (İstanbul saati) zorunlu
+  kontrol yapılır; TCMB gecikirse sonraki 15 dakikalık tur yakalar.
+- Gün değiştiğinde bir kez zorunlu yenileme yapılır.
 - Son iyi veri `%APPDATA%\tcmb-eur-widget\rates.json` içinde tutulur.
   İnternet yoksa widget son veriyi **“eski veri”** etiketiyle gösterir.
 - Pencere konumu `%APPDATA%\tcmb-eur-widget\window.json` içinde saklanır.

@@ -4,6 +4,7 @@ const { app, BrowserWindow, Menu, Tray, nativeImage, screen, ipcMain, powerMonit
 const path = require("node:path");
 const fs = require("node:fs");
 const { createService } = require("./rates");
+const { istanbulDay, nextCheckpoint } = require("./schedule");
 
 const WIDTH = 324;
 const HEIGHT = 172;
@@ -17,6 +18,8 @@ let stateFile = null;
 let quitting = false;
 let moveTimer = null;
 let refreshTimer = null;
+let bulletinTimer = null;
+let lastDay = null;
 let lastPayload = null;
 let captured = false;
 
@@ -244,6 +247,19 @@ async function refresh(force = false) {
   }
 }
 
+/* Bülten çıkış saatlerinde (15:31 / 15:35 / 15:40) zorunlu kontrol. */
+function scheduleBulletinCheck() {
+  clearTimeout(bulletinTimer);
+  const next = nextCheckpoint();
+  const delay = Math.max(1000, next.getTime() - Date.now());
+  console.log(`[schedule] next bulletin check ${next.toISOString()} (${Math.round(delay / 1000)}s)`);
+
+  bulletinTimer = setTimeout(async () => {
+    await refresh(true);
+    scheduleBulletinCheck();
+  }, delay);
+}
+
 /* ------------------------------------------------------------------ */
 /* capture (görsel doğrulama)                                          */
 /* ------------------------------------------------------------------ */
@@ -297,10 +313,20 @@ if (!gotLock) {
       updateTray(cached);
     }
 
+    lastDay = istanbulDay();
     refresh(false);
-    refreshTimer = setInterval(() => refresh(false), REFRESH_MS);
+    refreshTimer = setInterval(() => {
+      const day = istanbulDay();
+      const dayChanged = day !== lastDay;
+      if (dayChanged) lastDay = day;
+      refresh(dayChanged);
+    }, REFRESH_MS);
+    scheduleBulletinCheck();
 
-    powerMonitor.on("resume", () => refresh(true));
+    powerMonitor.on("resume", () => {
+      refresh(true);
+      scheduleBulletinCheck();
+    });
 
     ipcMain.handle("rates:get", () => service.current() || lastPayload);
     ipcMain.handle("rates:refresh", () => refresh(true));
@@ -321,6 +347,7 @@ if (!gotLock) {
   app.on("before-quit", () => {
     quitting = true;
     clearInterval(refreshTimer);
+    clearTimeout(bulletinTimer);
   });
 
   app.on("window-all-closed", () => {

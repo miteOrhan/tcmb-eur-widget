@@ -39,6 +39,7 @@
       "main.js",
       "preload.js",
       "rates.js",
+      "schedule.js",
       "src/**/*",
       "build/icon.png",
       "build/tray.png",
