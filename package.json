@@ -1,0 +1,67 @@
+{
+  "name": "tcmb-eur-widget",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TCMB 15:30 günlük EUR/TRY masaüstü widget'ı",
+  "author": "miteOrhan",
+  "license": "MIT",
+  "homepage": "https://github.com/miteOrhan/tcmb-eur-widget#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miteOrhan/tcmb-eur-widget.git"
+  },
+  "bugs": {
+    "url": "https://github.com/miteOrhan/tcmb-eur-widget/issues"
+  },
+  "keywords": [
+    "tcmb",
+    "eur",
+    "try",
+    "exchange-rate",
+    "widget",
+    "electron",
+    "windows"
+  ],
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "app": "electron .",
+    "capture": "electron . --capture",
+    "dist": "electron-builder --win portable"
+  },
+  "build": {
+    "appId": "com.local.tcmbeurwidget",
+    "productName": "TCMB EUR Widget",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "rates.js",
+      "src/**/*",
+      "build/icon.png",
+      "build/tray.png",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "portable": {
+      "artifactName": "TcmbEurWidget.exe"
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.4.1",
+    "electron-builder": "^26.18.0"
+  }
+}
