@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 const { app, BrowserWindow, Menu, Tray, nativeImage, screen, ipcMain, powerMonitor } = require("electron");
 const path = require("node:path");
@@ -25,12 +25,12 @@ const captureMode = process.argv.includes("--capture");
 const nf = new Intl.NumberFormat("tr-TR", { minimumFractionDigits: 4, maximumFractionDigits: 4 });
 
 function fmt(v) {
-  return v == null || !Number.isFinite(v) ? "â€”" : nf.format(v);
+  return v == null || !Number.isFinite(v) ? "—" : nf.format(v);
 }
 
 function pctText(v) {
   if (v == null || !Number.isFinite(v)) return "";
-  const arrow = v > 0 ? "â–²" : v < 0 ? "â–¼" : "â€¢";
+  const arrow = v > 0 ? "▲" : v < 0 ? "▼" : "•";
   return `${arrow} %${Math.abs(v).toFixed(2).replace(".", ",")}`;
 }
 
@@ -60,7 +60,7 @@ function saveState(patch) {
   try {
     fs.writeFileSync(stateFile, JSON.stringify({ ...readState(), ...patch }));
   } catch {
-    /* konum kaydÄ± kritik deÄŸil */
+    /* konum kaydı kritik değil */
   }
 }
 
@@ -88,7 +88,7 @@ function resetPosition() {
 }
 
 /* ------------------------------------------------------------------ */
-/* window                                                             */
+/* window                                                              */
 /* ------------------------------------------------------------------ */
 
 function createWindow() {
@@ -161,7 +161,7 @@ function toggleWindow() {
 }
 
 /* ------------------------------------------------------------------ */
-/* tray                                                               */
+/* tray                                                                */
 /* ------------------------------------------------------------------ */
 
 function setLogin(enable) {
@@ -179,11 +179,11 @@ function buildTrayMenu() {
 
   tray.setContextMenu(
     Menu.buildFromTemplate([
-      { label: "GÃ¶ster / Gizle", click: toggleWindow },
-      { label: "Åimdi yenile", click: () => refresh(true) },
+      { label: "Göster / Gizle", click: toggleWindow },
+      { label: "Şimdi yenile", click: () => refresh(true) },
       { type: "separator" },
       {
-        label: "Windows ile baÅŸlat",
+        label: "Windows ile başlat",
         type: "checkbox",
         checked: started,
         click: (item) => {
@@ -191,10 +191,10 @@ function buildTrayMenu() {
           buildTrayMenu();
         },
       },
-      { label: "Konumu sÄ±fÄ±rla", click: resetPosition },
+      { label: "Konumu sıfırla", click: resetPosition },
       { type: "separator" },
       {
-        label: "Ã‡Ä±kÄ±ÅŸ",
+        label: "Çıkış",
         click: () => {
           quitting = true;
           app.quit();
@@ -209,18 +209,18 @@ function createTray() {
   let image = nativeImage.createFromPath(iconPath);
   if (image.isEmpty()) image = nativeImage.createFromPath(path.join(__dirname, "build", "icon.png"));
   tray = new Tray(image.resize({ width: 16, height: 16 }));
-  tray.setToolTip("TCMB EUR/TRY Â· yÃ¼kleniyorâ€¦");
+  tray.setToolTip("TCMB EUR/TRY · yükleniyor…");
   tray.on("click", toggleWindow);
   buildTrayMenu();
 }
 
 /* ------------------------------------------------------------------ */
-/* veri                                                               */
+/* veri                                                                */
 /* ------------------------------------------------------------------ */
 
 function updateTray(data) {
   if (!tray || !data || data.buy == null) return;
-  const tip = `EUR/TRY Â· AlÄ±ÅŸ ${fmt(data.buy)} Â· SatÄ±ÅŸ ${fmt(data.sell)} Â· ${pctText(data.buyChangePct)}`;
+  const tip = `EUR/TRY · Alış ${fmt(data.buy)} · Satış ${fmt(data.sell)} · ${pctText(data.buyChangePct)}`;
   tray.setToolTip(tip.slice(0, 127));
 }
 
@@ -239,13 +239,13 @@ async function refresh(force = false) {
   } catch (err) {
     const data = { error: String(err.message || err), stale: true };
     push(data);
-    if (tray) tray.setToolTip("TCMB EUR/TRY Â· veri alÄ±namadÄ±");
+    if (tray) tray.setToolTip("TCMB EUR/TRY · veri alınamadı");
     return data;
   }
 }
 
 /* ------------------------------------------------------------------ */
-/* capture (gÃ¶rsel doÄŸrulama)                                          */
+/* capture (görsel doğrulama)                                          */
 /* ------------------------------------------------------------------ */
 
 async function captureWindow() {
@@ -267,7 +267,7 @@ async function captureWindow() {
 }
 
 /* ------------------------------------------------------------------ */
-/* app                                                                */
+/* app                                                                 */
 /* ------------------------------------------------------------------ */
 
 app.setAppUserModelId("com.local.tcmbeurwidget");
